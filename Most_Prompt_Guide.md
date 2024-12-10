@@ -18,14 +18,20 @@
   - [2. Chain of Thought (COT)](#2-Chain-of-Thought-COT)
     - [Why COT?](#Why-COT)
     - [How to apply COT?](#How-to-apply-COT)
-  - [3. Other Tricks](#3-Other-Tricks)
+    - [Automatic Chain-of-Thought (Auto-CoT)](#Automatic-Chain-of-Thought-Auto-CoT)
+    - [Tree of Thoughts (TOT)](#Tree-of-Thoughts-TOT)
+  - [3. Other Techniques](#3-Other-Techniques)
     - [Personification](#Personification)
-    - Prompt Framework
-      - CO-START
+    - [Few-shot Prompt](#Few-shot-Prompt)
+  - [4. Prompt Framework](#4-Prompt-Framework)
+    - [CO-STAR]()
+  - [5. Prompt Tutorial Collection](#5-Prompt-Tutorial-Collection)
 
 
 
 ## 1. Structure Prompt
+
+---
 ### Why Structure Prompt?
 >- Structured: Organizing information to follow specific patterns and 
 rules, making it easier and more efficient to understand.
@@ -51,7 +57,7 @@ based on lisp showed interesting result,such as example provided by
 
 2. Maintain contextual semantic consistency:
 <br> **_format semantic consistency_**: Ensure the identifier's function remains 
-consistent throughout. Avoid mixed usage, such as using # to indicate both headers 
+consistent throughout. Avoid mixed usage, such as using `#` to indicate both headers 
 and variables, as this creates inconsistency. Such practices can disrupt the 
 model's ability to recognize the hierarchical structure of prompts. 
 <br> **_content semantic consistency_**: Ensure the semantic appropriateness of
@@ -81,8 +87,15 @@ Initialization: 冷启动时的对白, 也是一个强调需注意重点的机�
 
 ## 2. Chain of Thought (COT)
 
-
+---
 >- ***Chain of Thought***: a series of intermediate reasoning steps.
+
+Introduced in [Wei et al. (2022)](https://arxiv.org/abs/2201.11903), 
+chain-of-thought (CoT) prompting enables 
+complex reasoning capabilities through intermediate reasoning steps. You can 
+combine it with few-shot prompting to get better results on more complex 
+tasks that require reasoning before responding.
+
 
 ### Why COT?
 
@@ -97,16 +110,106 @@ Quoted from the paper [_Chain-of-Thought Prompting Elicits Reasoning in Large La
 
 ### How to apply COT?
 
-- Think step by step
+- Tell LLMs `Think step by step`.
 - Output thinking process in answer.
-  - Notes: LLMs answer your question based on generating the last word.
+  - Notes: LLMs answer your question based on generating the last word, during this 
+process, LLMs will consider the generated context before. Therefore, if the previous
+context of answer contain the thinking process, LLMs more like to give a reasonable
+answer for complete query.
 
-## 3. Other Tricks
+One recent idea that came out more recently is the idea of 
+zero-shot CoT (Kojima et al. 2022) that essentially involves adding "Let's think 
+step by step" to the original prompt. Let's try a simple problem and see how the 
+model performs:
+
+_Naive Prompt:_
+```
+I went to the market and bought 10 apples. I gave 2 apples to the neighbor and 2 to 
+the repairman. I then went and bought 5 more apples and ate 1. How many apples did 
+I remain with?
+```
+
+_Naive Output:_
+```
+11 apples
+```
+
+The answer is incorrect! Now Let's try with the special prompt.
+
+_COT Prompt:_
+```
+I went to the market and bought 10 apples. I gave 2 apples to the neighbor and 2 to the repairman. I then went and bought 5 more apples and ate 1. How many apples did I remain with?
+Let's think step by step.
+```
+
+_COT Output:_
+```
+First, you started with 10 apples.
+You gave away 2 apples to the neighbor and 2 to the repairman, so you had 6 apples left.
+Then you bought 5 more apples, so now you had 11 apples.
+Finally, you ate 1 apple, so you would remain with 10 apples.
+```
+
+### Automatic Chain-of-Thought (Auto-CoT)
+Auto-CoT consists of two main stages:
+
+- Stage 1): **question clustering**: partition questions of a given dataset into 
+a few clusters
+- Stage 2): **demonstration sampling**: select a representative question from each 
+cluster and generate its reasoning chain using Zero-Shot-CoT with simple heuristics
+
+
+### Tree of Thoughts (TOT)
+
+- Tree of Thoughts (ToT), a framework that generalizes over chain-of-thought prompting
+and encourages exploration over thoughts that serve as intermediate steps for 
+general problem-solving with language models.
+
+Hulbert (2023) has proposed Tree-of-Thought Prompting, which applies the main concept
+from ToT frameworks as a simple prompting technique, getting the LLM to evaluate
+intermediate thoughts in a single prompt. A sample ToT prompt is:
+```
+Imagine three different experts are answering this question.
+All experts will write down 1 step of their thinking,
+then share it with the group.
+Then all experts will go on to the next step, etc.
+If any expert realises they're wrong at any point then they leave.
+The question is...
+```
+
+## 3. Other Techniques
+
+---
 ### Personification
 
 Personification: Treat LLM like a human being.
 
+- Put pressure on the LLM
+```
+I urgently need to achieve this requirement to keep my job. 
+If you cannot complete the task I've given you properly, I will lose my job.
+```
 
+- Reward the LLM
+```
+If you can complete the task excellently, I will reward you with $10
+```
+
+### Few-shot Prompt
+
+
+## 4. Prompt Framework
 
 ---
 
+
+
+## 5. Prompt Tutorial Collection
+
+---
+
+- [Prompt Engineering Guide](https://www.promptingguide.ai/)
+- [通往AGI之路](https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e)
+- [langgptai/wonderful-prompts](https://github.com/langgptai/wonderful-prompts)
+- [如何写好Prompt: 结构化 @lijigang](https://www.lijigang.com/posts/chatgpt-prompt-structure/)
+- [李继刚 github案例](https://github.com/lijigang/prompts)
