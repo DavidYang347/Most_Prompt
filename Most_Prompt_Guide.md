@@ -31,17 +31,11 @@ but in c
 # python code example
 prompt ='''
 Role: 指定角色会让 GPT 聚焦在对应领域进行信息输出
-
 Profile author/version/description : Credit 和 迭代版本记录
-
 Goals: 一句话描述 Prompt 目标, 让 GPT Attention 聚焦起来
-
 Constrains: 描述限制条件, 其实是在帮 GPT 进行剪枝, 减少不必要分支的计算
-
 Skills: 描述技能项, 强化对应领域的信息权重
-
 Workflow: 重点中的重点, 你希望 Prompt 按什么方式来对话和输出
-
 Initialization: 冷启动时的对白, 也是一个强调需注意重点的机会
 '''
 ```
